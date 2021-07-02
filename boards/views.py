@@ -25,12 +25,14 @@ def board_topics(request, board_id):
     board = get_object_or_404(Board, pk=board_id)
     return render(request, 'pages/topics.html', context={'board': board})
 
-
-def new_topic(request, board_id):
+def new_topic_pure_django(request, board_id):
+    '''
+    form way // conventional way
+    '''
     board = get_object_or_404(Board, pk=board_id)
     if request.method == 'POST':
         subject = request.POST['subject']  # from thr form , inpuutElm, by name not id
-        message = request.POST['message']
+        message = request.POSTget('message') # other way
         user = User.objects.first()
 
         topic = Topic.objects.create(
@@ -49,6 +51,31 @@ def new_topic(request, board_id):
 
 
     return render(request, 'new_topic.html', context={'board': board})
+
+from .forms import NewTopicForm
+def new_topic(request, board_id):
+    board = get_object_or_404(Board, pk=board_id)
+    user = User.objects.first()
+    if request.method == 'POST':
+        form = NewTopicForm(request.POST)
+        if form.is_valid():
+            topic = form.save(commit=False)
+            topic.board = board
+            topic.created_by = user
+            topic.save()
+
+            post = Post.objects.create(
+                message=form.cleaned_data.get('user_message'),
+                topic=topic,
+                created_by=user
+            )
+            return redirect('board_topics', board_id = board_id or board.pk)            
+    else:
+        form = NewTopicForm()
+
+
+    return render(request, 'new_topic.html', context={'board': board, 'form':form})
+
 
 
 def about_us(req):

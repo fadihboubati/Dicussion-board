@@ -11,7 +11,15 @@ Create new topic
 {% endblock breadcrumb %}
 
 {% block content %}
-<form method="POST" action="">
+<form method="POST" novalidate>
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit" class="btn btn-success">Add</button>
+</form>
+
+
+<!--  form way // conventional way
+    <form method="POST" action="">
     {% csrf_token %}
     <div class="form-group">
       <label for="id_subject">Subjects</label>
@@ -22,5 +30,6 @@ Create new topic
       <textarea class="form-control" id="id_message" rows="5" name="message"></textarea>
     </div>
     <button type="submit" class="btn btn-success">Add</button>
-</form>
+</form> 
+-->
 {% endblock content %}
