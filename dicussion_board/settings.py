@@ -34,12 +34,12 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin', # app for the admin control ( ./admin)
-    'django.contrib.auth', # app for the authentication
+    'django.contrib.admin',  # app for the admin control ( ./admin)
+    'django.contrib.auth',  # app for the authentication
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles', # support the staticfiles
+    'django.contrib.staticfiles',  # support the staticfiles
     # Internal
     'boards',
 ]
@@ -81,11 +81,9 @@ WSGI_APPLICATION = 'dicussion_board.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'qyacdudf',
-        'USER': 'qyacdudf',
-        'PASSWORD':'t1y39_QwLLgzcAj0QQUKsFKJ3YmwfUM-',
-        'HOST': 'batyr.db.elephantsql.com',
-        'PORT': '5432'
+        'NAME': 'boards_django',
+        'USER': 'postgres',
+        'PASSWORD':'777777',
     }
 }
 

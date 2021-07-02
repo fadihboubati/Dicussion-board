@@ -10,16 +10,18 @@ class Board (models.Model):
     # def __str__(self):
     #     return self.name
 
+
 class Topic(models.Model):
     subject = models.CharField(max_length=225)
-    board = models.ForeignKey(Board, related_name='topics', on_delete=models.CASCADE)
-    created_by = models.ForeignKey(User, related_name='topics', on_delete=models.CASCADE)
+    board = models.ForeignKey(Board, related_name='topics_related_name', on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, related_name='topics_related_name', on_delete=models.CASCADE)
     created_dt = models.DateTimeField(auto_now_add=True)
+    # ForeignKey: many-to-one relationship
+    # related_name attribute specifies the name of the reverse relation from the User model back to your model.
+
 
 class Post(models.Model):
     message = models.TextField(max_length=4000)
-    topic = models.ForeignKey(Topic, related_name='posts', on_delete=models.CASCADE)
-    created_by = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
+    topic = models.ForeignKey(Topic, related_name='posts_related_name', on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, related_name='posts_related_name', on_delete=models.CASCADE)
     created_dt = models.DateTimeField(auto_now_add=True)
-    
-    
