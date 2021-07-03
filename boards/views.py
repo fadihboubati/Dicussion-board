@@ -54,24 +54,30 @@ def new_topic_pure_django(request, board_id):
 
 from .forms import NewTopicForm
 def new_topic(request, board_id):
+    '''
+    Django from way
+    '''
     board = get_object_or_404(Board, pk=board_id)
     user = User.objects.first()
-    if request.method == 'POST':
-        form = NewTopicForm(request.POST)
+    if request.method == 'POST': # if this is a POST request we need to process the form data
+
+        # create a form instance and populate it with data from the request:
+        form = NewTopicForm(request.POST) # This is called “binding data to the form” (it is now a bound form)
         if form.is_valid():
-            topic = form.save(commit=False)
-            topic.board = board
+            topic = form.save(commit=False) # save temporarly for adding another value
+            print(topic)
+            topic.board = board # since the form class use model Topic in the meta model
             topic.created_by = user
             topic.save()
 
             post = Post.objects.create(
-                message=form.cleaned_data.get('user_message'),
+                message=form.cleaned_data.get('message_from_django_form'),
                 topic=topic,
                 created_by=user
             )
             return redirect('board_topics', board_id = board_id or board.pk)            
-    else:
-        form = NewTopicForm()
+    else:  # if a GET (or any other method) we'll create a blank form
+        form = NewTopicForm() # unbound form
 
 
     return render(request, 'new_topic.html', context={'board': board, 'form':form})

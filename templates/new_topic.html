@@ -13,10 +13,13 @@ Create new topic
 {% block content %}
 <form method="POST" novalidate>
     {% csrf_token %}
-    {{form.as_p}}
+    <!-- {{form.as_p}} -->
+    {% include 'includes/form.html' %}  
+    <br />
     <button type="submit" class="btn btn-success">Add</button>
 </form>
 
+{% endblock content %}
 
 <!--  form way // conventional way
     <form method="POST" action="">
@@ -32,4 +35,3 @@ Create new topic
     <button type="submit" class="btn btn-success">Add</button>
 </form> 
 -->
-{% endblock content %}

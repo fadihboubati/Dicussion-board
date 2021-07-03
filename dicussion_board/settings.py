@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',  # support the staticfiles
     # Internal
     'boards',
+    # third-party
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
