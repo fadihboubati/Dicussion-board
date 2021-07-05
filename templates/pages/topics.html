@@ -10,7 +10,7 @@
 {% endblock breadcrumb %}
 
 {% block content %}
-<a href="{% url 'new_topic' board.pk %}" class="btn btn-primary">New Topic</a>
+<a href="{% url 'new_topic' board.pk %}" class="btn btn-primary">Add a New Topic</a>
 {% if board.topics_related_name.all %}
 <table class="table table-dark">
     <thead class="thead-dark">

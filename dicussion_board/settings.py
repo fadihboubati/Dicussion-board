@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'boards',
     # third-party
     'widget_tweaks',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -83,7 +84,7 @@ WSGI_APPLICATION = 'dicussion_board.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'boards_django',
+        'NAME': 'boards_django_2',
         'USER': 'postgres',
         'PASSWORD':'777777',
     }
