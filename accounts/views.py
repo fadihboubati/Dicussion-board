@@ -6,6 +6,12 @@ from django.contrib.auth import login as auth_login
 
 from .forms import SignUpForm
 
+from django.conf import settings
+print('BASE_DIR = Path(__file__):', settings.BASE_DIR1)
+print('BASE_DIR2 = Path(__file__).resolve():', settings.BASE_DIR2)
+print('BASE_DIR3 = Path(__file__).resolve().parent:', settings.BASE_DIR3)
+print('BASE_DIR4 = Path(__file__).resolve().parent.parent:', settings.BASE_DIR4)
+
 # Create your views here.
 def signup(request):
     if request.method == 'POST':

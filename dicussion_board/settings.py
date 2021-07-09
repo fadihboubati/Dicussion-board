@@ -15,6 +15,12 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# for test
+BASE_DIR1 = Path(__file__)
+BASE_DIR2 = Path(__file__).resolve()
+BASE_DIR3 = Path(__file__).resolve().parent
+BASE_DIR4 = Path(__file__).resolve().parent.parent
+
 # import os
 # OS = os.path.join(BASE_DIR,'fadi','id','passport.pdf') # -> BASE_DIR/fadi/id/passport.pdf
 
@@ -129,9 +135,19 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+import os
+STATICFILES_DIRS2 = [os.path.join(BASE_DIR, "static"),]
+
+
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+# when you logout, go to the url that have the name='home'
+LOGOUT_REDIRECT_URL = 'home'
+
+# when you login, go to the url that have the name='home'
+LOGIN_REDIRECT_URL = 'home'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

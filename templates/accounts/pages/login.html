@@ -12,17 +12,17 @@ Signup
 
 {% block body %}
 <div class="container">
-    <h1>Sign up</h1>
+    <h1>Log in</h1>
     <form action="" method="POST" novalidate>
         {% csrf_token%}
         <!-- {{ form.as_p }} -->
         {% include 'includes/form.html' %}  
         <br />
-        <button type="submit" class="btn btn-primary">Create New User</button>
+        <button type="submit" class="btn btn-primary">login</button>
     </form>
     <hr />
     <div class="cart-footer text-muted text-center">
-        Already have an account? <a href="{% url 'login' %}">Log in</a>
+        Dont have an account? <a href="{% url 'signup' %}">Signup</a>
     </div>
     <hr />
 </div>
