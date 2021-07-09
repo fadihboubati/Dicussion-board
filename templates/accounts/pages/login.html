@@ -16,6 +16,7 @@ Signup
     <form action="" method="POST" novalidate>
         {% csrf_token%}
         <!-- {{ form.as_p }} -->
+        <input type="hidden" name="next" value="{{ next }}"> <!-- in the value: add the path (path name) that you want to redirect after log in if the user not authenticated -->
         {% include 'includes/form.html' %}  
         <br />
         <button type="submit" class="btn btn-primary">login</button>

@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
 from django.http import HttpResponse,JsonResponse, Http404
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from .models import Topic, Post
 from .models import Board
 
@@ -53,12 +54,14 @@ def new_topic_pure_django(request, board_id):
     return render(request, 'new_topic.html', context={'board': board})
 
 from .forms import NewTopicForm
+@login_required
 def new_topic(request, board_id):
     '''
     Django from way
     '''
     board = get_object_or_404(Board, pk=board_id)
-    user = User.objects.first()
+    # user = User.objects.first()
+    user = request.user
     if request.method == 'POST': # if this is a POST request we need to process the form data
 
         # create a form instance and populate it with data from the request:
