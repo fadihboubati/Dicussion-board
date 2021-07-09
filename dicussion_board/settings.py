@@ -149,6 +149,9 @@ LOGOUT_REDIRECT_URL = 'home'
 # when you login, go to the url that have the name='home'
 LOGIN_REDIRECT_URL = 'home'
 
+# if we try to access to url 'password_change_done' directly, that will move us to the 'login' url
+LOGIN_URL = 'login'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
