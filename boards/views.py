@@ -85,6 +85,13 @@ def new_topic(request, board_id):
 
     return render(request, 'new_topic.html', context={'board': board, 'form':form})
 
+def topic_posts(request, board_id, topic_id):
+    topic = get_object_or_404(Topic, board__pk=board_id, pk=topic_id)
+    template_name = 'pages/topic_posts.html'
+    context = {'topic':topic}
+    status = 200
+
+    return render(request, template_name, context, status=status)
 
 
 def about_us(req):
