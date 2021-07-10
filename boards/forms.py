@@ -1,5 +1,5 @@
 from django import forms
-from .models import Topic
+from .models import Topic, Post
 class NewTopicForm(forms.ModelForm):
     # init an input for the from
     message_from_django_form = forms.CharField(
@@ -12,3 +12,8 @@ class NewTopicForm(forms.ModelForm):
     class Meta: # helper class
         model = Topic
         fields = ['subject', 'message_from_django_form']
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['message']

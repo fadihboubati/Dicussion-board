@@ -14,18 +14,34 @@
 
 {% block content %}
 
-{% for post in topic.posts_related_name.all%}
-<div class="row">
-    <div class="col-2">
-        <img class="w-100" src="{% static 'assets/user_icon.png' %}" alt="{{ post.created_by.username }}">
-    </div>
-    <div class="col-10">
-        <p>{{ post.created_by.username }}</p>
-        <p>{{ post.message }}</p>
-        <p>{{ post.created_dt }}</p>
-        {% if post.created_by == user %}
-        <a class='btn btn-primary' href="#">edit</a>
-        {% endif %}
+<div class="mb-4">
+    <a href="{% url 'reply_topic' topic.board.pk topic.pk %}" class="btn btn-primary">Reply</a>
+</div>
+
+{% for post in topic.posts_related_name.all %}
+<div class="card mb-2">
+    <div class="card-body p-3">
+        <div class="row">
+            <div class="col-2">
+                <img src="{% static 'assets/user_male_icon.png' %}" alt="{{ post.created_by.username }}" class="w-100">
+            </div>
+            <div class="col-10">
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <strong class="text-muted">{{ post.created_by.username }}</strong>
+                    </div>
+                    <div class="col-6 text-right">
+                        <small class="text-muted">{{ post.created_dt }}</small>
+                    </div>
+                </div>
+                {{ post.message }}
+                {% if post.created_by == user %}
+                <div class="mt-3">
+                    <a href="#" class="btn btn-primary btn-sm" role="button">Edit</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
 {% endfor %}

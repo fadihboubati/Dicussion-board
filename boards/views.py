@@ -93,6 +93,26 @@ def topic_posts(request, board_id, topic_id):
 
     return render(request, template_name, context, status=status)
 
+from .forms import PostForm
+@login_required
+def reply_topic(request, board_id, topic_id):
+    topic = get_object_or_404(Topic, board__pk=board_id, pk=topic_id)
+
+    user = request.user
+    if request.method == 'POST':
+        form = PostForm(request.POST) # This is called “binding data to the form” (it is now a bound form)
+        if form.is_valid():
+            post = form.save(commit=False) # save temporarly for adding another value
+            post.topic = topic
+            post.created_by = user
+            post.save()
+
+            return redirect('topic_posts', board_id=board_id, topic_id=topic_id)            
+    else:  # if a GET (or any other method) we'll create a blank form
+        form = PostForm() # unbound form
+
+    return render(request, template_name='pages/reply_topic.html', context={'topic':topic, 'form':form})
+
 
 def about_us(req):
     return HttpResponse('<h1>About Us Page</h1>', status=200)
