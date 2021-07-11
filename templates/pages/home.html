@@ -19,17 +19,25 @@ Home Page
         </tr>
     </thead>
     <tbody>
-        {% for obj in boards %}
+        {% for board in boards %}
         <tr>
             <td>
-                <a href="{% url 'board_topics' obj.id%}">
-                    {{obj.name}}
+                <a href="{% url 'board_topics' board.id%}">
+                    {{board.name}}
                 </a>
-                <small class="text-muted d-block">{{obj.description}}</small>
+                <small class="text-muted d-block">{{board.description}}</small>
             </td>
-            <td>0</td>
-            <td>0</td>
-            <td></td>
+            <td>{{ board.get_posts_count }}</td>
+            <td>{{ board.topics_related_name.count }}</td>
+            <td>
+                {% with userPost=board.get_last_post%}
+                {%if userPost%}
+                by {{userPost.created_by.username}} at {{userPost.created_dt}}
+               {%else%}
+                <small>No Posts</small>
+                {%endif%}
+                {%endwith%}
+            </td>
         </tr>
         {% endfor %}
     </tbody>

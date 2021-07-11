@@ -1,11 +1,20 @@
 from django.db import models
 from django.contrib.auth.models import User # table of users
+from django.utils.text import Truncator
 # Create your models here.
 
 
 class Board(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=150)
+
+    def get_posts_count(self):
+        # topic and board are ForeignKey
+        return Post.objects.filter(topic__board=self).count()
+        
+    def get_last_post(self):
+        return Post.objects.filter(topic__board=self).order_by('-created_dt').first()
+
     def __str__(self):
         return self.name
 
@@ -29,5 +38,6 @@ class Post(models.Model):
     created_dt = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.message
+        truncated__message = Truncator(self.message)
+        return truncated__message.chars(30)
 
