@@ -29,12 +29,12 @@
 
     <!-- Notes that in Jinja, if the value does not exist, that will not give you an error or undefine -->
     <!-- we can use this good thing to make a conditional rendering -->
-    {% for topic in board.topics_related_name.all %}
+    {% for topic in topics %}
     <tr>
         <td> <a href="{% url 'topic_posts' board.pk topic.pk %}">{{topic.subject}}</a></td>
         <td>{{topic.created_by.username}}</td>
         <td>{{topic.created_by.email}}</td>
-        <td>0</td>
+        <td>{{topic.comments}}</td>
         <td>0</td>
         <td>{{topic.created_dt}}</td>
     </tr>

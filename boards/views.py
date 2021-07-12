@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import Topic, Post
 from .models import Board
+from django.db.models import Count
 
 
 # from django.conf import settings
@@ -24,7 +25,18 @@ def board_topics(request, board_id):
     # except Board.DoesNotExist:
     #     raise Http404
     board = get_object_or_404(Board, pk=board_id)
-    return render(request, 'pages/topics.html', context={'board': board})
+
+    # list of topics orderd from the new one to the old, + with a new column called 'comments'
+    # 1' way
+    topics = board.topics_related_name.order_by('-created_dt').annotate(comments=Count('posts_related_name'))
+    # 2' way
+    topics = reversed(board.topics_related_name.annotate(comments=Count('posts_related_name')))
+    # 3' way, add this class Meta to the model(need to migrate)
+    #    class Meta:
+    #       ordering = ['-id']
+    # topics = board.topics_related_name.annotate(comments=Count('posts_related_name'))
+
+    return render(request, 'pages/topics.html', context={'board': board, 'topics':topics})
 
 def new_topic_pure_django(request, board_id):
     '''
