@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
 from django.http import HttpResponse,JsonResponse, Http404
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, method_decorator
 from .models import Topic, Post
 from .models import Board
 from django.db.models import Count
@@ -162,11 +162,11 @@ class NewTopic(View):
 # ------------------------- topic posts view ------------------------- #
 def topic_posts(request, board_id, topic_id):
     topic = get_object_or_404(Topic, board__pk=board_id, pk=topic_id)
-    template_name = 'pages/topic_posts.html'
-    context = {'topic':topic}
-    status = 200
     topic.views += 1
     topic.save()
+    status = 200
+    template_name = 'pages/topic_posts.html'
+    context = {'topic':topic}
 
     return render(request, template_name, context, status=status)
 
@@ -198,6 +198,8 @@ def about_us(req):
 
 # ------------------------- Update topic view ------------------------- #
 from django.utils import timezone
+
+@method_decorator(login_required, name='dispatch')
 class PostUpdateView(UpdateView):
     model = Post
     fields = ('message', ) # The fields that I wanna update it
@@ -210,3 +212,4 @@ class PostUpdateView(UpdateView):
         post.updated_by = self.request.user
         post.updated_dt = timezone.now()
         post.save()
+        return redirect('topic_posts', board_id=post.topic.board.pk, topic_id=post.topic.pk)
