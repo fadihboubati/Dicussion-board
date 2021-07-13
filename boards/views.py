@@ -11,15 +11,32 @@ from django.db.models import Count
 # print('settings.BASE_DIR:', settings.BASE_DIR)
 # print('os.path',settings.OS)
 
-def home(request):
+from django.views import View # for CBV way 
+from django.views.generic import CreateView, ListView, UpdateView # for GCBV
+
+
+# ------------------------- home view ------------------------- #
+
+def home(request): # function-based views (FBV)
     # boards = Board.objects.all() # list of objects
-    boards = get_list_or_404(Board)
     # boards_names = [obj.name for obj in boards]
     # response_html = '<br/>'.join(boards_names)
+    boards = get_list_or_404(Board)
     return render(request, 'pages/home.html', context={'boards': boards})
 
 
-def board_topics(request, board_id):
+class HomeView(View): # Using class-based views (CBV)
+    def get(self, request):
+        boards = get_list_or_404(Board)
+        return render(request, 'pages/home.html', context={'boards': boards})
+
+class HomeViewList(ListView):# using global class-based view (GCBV)
+    context_object_name = 'boards'
+    template_name = 'pages/home.html'
+    queryset = get_list_or_404(Board)
+
+# ------------------------- board topics view ------------------------- #
+def board_topics(request, board_id): # function-based views (fbv)
     # try:
     #     board = Board.objects.get(pk=board_id)
     # except Board.DoesNotExist:
@@ -38,6 +55,16 @@ def board_topics(request, board_id):
 
     return render(request, 'pages/topics.html', context={'board': board, 'topics':topics})
 
+
+class BoardTopics(View):
+    def get(self, request, board_id):
+        board = get_object_or_404(Board, pk=board_id)
+        topics = reversed(board.topics_related_name.annotate(comments=Count('posts_related_name')))
+        return render(request, 'pages/topics.html', context={'board': board, 'topics':topics})
+
+
+
+# ------------------------- new_topic view ------------------------- #
 def new_topic_pure_django(request, board_id):
     '''
     form way // conventional way
@@ -97,14 +124,53 @@ def new_topic(request, board_id):
 
     return render(request, 'new_topic.html', context={'board': board, 'form':form})
 
+class NewTopic(View):
+    def board(self, board_id):
+        return get_object_or_404(Board, pk=board_id)
+
+    def get(self, request):
+        form = NewTopicForm()
+        board = self.board
+        return render(request, 'new_topic.html', context={'board': board, 'form':form})
+        
+
+    def post(self, request, board_id):
+        user = request.user
+        form = NewTopicForm(request.POST)
+        board = self.board
+        if form.is_valid():
+            topic = form.save(commit=False) # save temporarly for adding extra value
+            topic.board = board # since the form class use model Topic in the meta model
+            topic.created_by = user
+            topic.save()
+
+            post = Post.objects.create(
+                message=form.cleaned_data.get('message_from_django_form'),
+                topic=topic,
+                created_by=user
+            )
+            return redirect('board_topics', board_id = board_id or board.pk)
+
+# from django.urls import reverse_lazy
+# class NewTopic2(CreateView):
+#     model = Topic
+#     form_class = NewTopicForm
+#     success_url = reverse_lazy('board_topics')
+#     template_name = 'new_topic.html'
+
+
+# ------------------------- topic posts view ------------------------- #
 def topic_posts(request, board_id, topic_id):
     topic = get_object_or_404(Topic, board__pk=board_id, pk=topic_id)
     template_name = 'pages/topic_posts.html'
     context = {'topic':topic}
     status = 200
+    topic.views += 1
+    topic.save()
 
     return render(request, template_name, context, status=status)
 
+# ------------------------- reply topic view ------------------------- #
 from .forms import PostForm
 @login_required
 def reply_topic(request, board_id, topic_id):
@@ -128,3 +194,19 @@ def reply_topic(request, board_id, topic_id):
 
 def about_us(req):
     return HttpResponse('<h1>About Us Page</h1>', status=200)
+
+
+# ------------------------- Update topic view ------------------------- #
+from django.utils import timezone
+class PostUpdateView(UpdateView):
+    model = Post
+    fields = ('message', ) # The fields that I wanna update it
+    template_name = 'pages/update_post.html'
+    pk_url_kwarg = 'post_id'
+    context_object_name = 'post'
+
+    def form_valid(self, form):
+        post = form.save(commit=False)
+        post.updated_by = self.request.user
+        post.updated_dt = timezone.now()
+        post.save()
