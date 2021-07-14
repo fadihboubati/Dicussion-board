@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
 from django.http import HttpResponse,JsonResponse, Http404
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required, method_decorator
+from django.contrib.auth.decorators import login_required
 from .models import Topic, Post
 from .models import Board
 from django.db.models import Count
@@ -198,6 +198,7 @@ def about_us(req):
 
 # ------------------------- Update topic view ------------------------- #
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 
 @method_decorator(login_required, name='dispatch')
 class PostUpdateView(UpdateView):
