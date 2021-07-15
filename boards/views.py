@@ -36,6 +36,7 @@ class HomeViewList(ListView):# using global class-based view (GCBV)
     queryset = get_list_or_404(Board)
 
 # ------------------------- board topics view ------------------------- #
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 def board_topics(request, board_id): # function-based views (fbv)
     # try:
     #     board = Board.objects.get(pk=board_id)
@@ -45,13 +46,21 @@ def board_topics(request, board_id): # function-based views (fbv)
 
     # list of topics orderd from the new one to the old, + with a new column called 'comments'
     # 1' way
-    topics = board.topics_related_name.order_by('-created_dt').annotate(comments=Count('posts_related_name'))
+    topics_queryset = reversed(board.topics_related_name.annotate(comments=Count('posts_related_name')))
     # 2' way
-    topics = reversed(board.topics_related_name.annotate(comments=Count('posts_related_name')))
+    # topics_queryset = board.topics_related_name.order_by('-created_dt').annotate(comments=Count('posts_related_name'))
     # 3' way, add this class Meta to the model(need to migrate)
     #    class Meta:
     #       ordering = ['-id']
-    # topics = board.topics_related_name.annotate(comments=Count('posts_related_name'))
+    # topics_queryset = board.topics_related_name.annotate(comments=Count('posts_related_name'))
+    page = request.GET.get('page',1)
+    paginator = Paginator(topics_queryset,20)
+    try:
+        topics = paginator.page(page)
+    except PageNotAnInteger:
+        topics = paginator.page(1)
+    except EmptyPage:
+        topics = paginator.page(paginator.num_pages)
 
     return render(request, 'pages/topics.html', context={'board': board, 'topics':topics})
 
@@ -59,9 +68,17 @@ def board_topics(request, board_id): # function-based views (fbv)
 class BoardTopics(View):
     def get(self, request, board_id):
         board = get_object_or_404(Board, pk=board_id)
-        topics = reversed(board.topics_related_name.annotate(comments=Count('posts_related_name')))
-        return render(request, 'pages/topics.html', context={'board': board, 'topics':topics})
+        topics_queryset = board.topics_related_name.order_by('-created_dt').annotate(comments=Count('posts_related_name'))
+        page = request.GET.get('page',1)
+        paginator = Paginator(topics_queryset,7)
+        try:
+            topics = paginator.page(page)
+        except PageNotAnInteger:
+            topics = paginator.page(1)
+        except EmptyPage:
+            topics = paginator.page(paginator.num_pages)
 
+        return render(request, 'pages/topics.html', context={'board': board, 'topics':topics})
 
 
 # ------------------------- new_topic view ------------------------- #

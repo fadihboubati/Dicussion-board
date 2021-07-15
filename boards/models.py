@@ -50,3 +50,16 @@ class Post(models.Model):
         truncated__message = Truncator(self.message)
         return truncated__message.chars(30)
 
+'''
+# create 100 obj for testing the pagination
+## in the shell
+from boards.models import Board, Topic, Post
+from django.contrib.auth.models import User
+user = User.objects.first()
+board = Board.objects.first()
+for i in range(100):
+    subject = f'topic test {i}'
+    topic = Topic.objects.create(subject=subject, board=board, created_by=user)
+    Post.objects.create(message='test post', topic=topic, created_by=user)
+
+'''

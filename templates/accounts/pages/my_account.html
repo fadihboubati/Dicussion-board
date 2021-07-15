@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}
+My Account
+{% endblock title %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active" aria-current="page">My Account</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+<form method="POST" novalidate>
+    {% csrf_token %}
+    <!-- {{form.as_p}} -->
+    {% include 'includes/form.html' %}  
+    <br />
+    <button type="submit" class="btn btn-success">Update</button>
+</form>
+
+{% endblock content %}

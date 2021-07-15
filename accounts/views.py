@@ -3,6 +3,10 @@ from django.shortcuts import render, redirect
 ## for user
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login as auth_login
+from django.contrib.auth.models import User 
+
+from django.urls import reverse_lazy
+from django.views.generic import UpdateView 
 
 from .forms import SignUpForm
 
@@ -26,3 +30,12 @@ def signup(request):
 
     return render(request, 'accounts/pages/signup.html',  context={'form':form})
     
+
+class UserUpdateView(UpdateView):
+    model = User
+    fields = ['first_name', 'last_name', 'email']
+    template_name = 'accounts/pages/my_account.html'
+    success_url = reverse_lazy('my_account')
+
+    def get_object(self):
+        return self.request.user

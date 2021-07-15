@@ -12,40 +12,80 @@
 {% block content %}
 <a href="{% url 'new_topic' board.pk %}" class="btn btn-primary">Add a New Topic</a>
 {% if board.topics_related_name.all %}
-<table class="table table-dark">
-    <thead class="thead-dark">
-        <tr>
-            <th rowspan="2">Topic</th>
-            <th colspan="2">Created by</th>
-            <th rowspan="2">Posts</th>
-            <th rowspan="2">Views</th>
-            <th rowspan="2">Created date</th>
-        </tr>
-        <tr>
-            <th>username</th>
-            <th>email</th>
-        </tr>
-    </thead>
+    <table class="table table-dark">
+        <thead class="thead-dark">
+            <tr>
+                <th rowspan="2">Topic</th>
+                <th colspan="2">Created by</th>
+                <th rowspan="2">Posts</th>
+                <th rowspan="2">Views</th>
+                <th rowspan="2">Created date</th>
+            </tr>
+            <tr>
+                <th>username</th>
+                <th>email</th>
+            </tr>
+        </thead>
 
-    <!-- Notes that in Jinja, if the value does not exist, that will not give you an error or undefine -->
-    <!-- we can use this good thing to make a conditional rendering -->
-    {% for topic in topics %}
-    <tr>
-        <td> <a href="{% url 'topic_posts' board.pk topic.pk %}">{{topic.subject}}</a></td>
-        <td>{{topic.created_by.username}}</td>
-        <td>{{topic.created_by.email}}</td>
-        <td>{{topic.comments}}</td>
-        <td>{{ topic.views }}</td>
-        <td>{{topic.created_dt}}</td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<h1>There is no topic added yet<br/>
-    <small>
-        be the first one who add
-    </small>
-</h1>
+        <!-- Notes that in Jinja, if the value does not exist, that will not give you an error or undefine -->
+        <!-- we can use this good thing to make a conditional rendering -->
+        {% for topic in topics %}
+        <tr>
+            <td> <a href="{% url 'topic_posts' board.pk topic.pk %}">{{topic.subject}}</a></td>
+            <td>{{topic.created_by.username}}</td>
+            <td>{{topic.created_by.email}}</td>
+            <td>{{topic.comments}}</td>
+            <td>{{ topic.views }}</td>
+            <td>{{topic.created_dt}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if topics.has_other_pages %}
+        <nav aria-label="Topics pagination" class="mb-4">
+            <ul class="pagination">
+            {% if topics.has_previous %}
+                <li class="page-item">
+                <a class="page-link" href="?page={{ topics.previous_page_number }}">Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+                </li>
+            {% endif %}
+
+            {% for page_num in topics.paginator.page_range %}
+                {% if topics.number == page_num %}
+                <li class="page-item active">
+                    <span class="page-link">
+                    {{ page_num }}
+                    <span class="sr-only">(current)</span>
+                    </span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if topics.has_next %}
+                <li class="page-item">
+                <a class="page-link" href="?page={{ topics.next_page_number }}">Next</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                <span class="page-link">Next</span>
+                </li>
+            {% endif %}
+            </ul>
+        </nav>
+        {% else %}
+        <h1>There is no topic added yet<br/>
+            <small>
+                be the first one who add
+            </small>
+        </h1>
+    {% endif %}
 {% endif %}
 {% endblock content %}
