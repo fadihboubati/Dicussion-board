@@ -179,8 +179,14 @@ class NewTopic(View):
 # ------------------------- topic posts view ------------------------- #
 def topic_posts(request, board_id, topic_id):
     topic = get_object_or_404(Topic, board__pk=board_id, pk=topic_id)
-    topic.views += 1
-    topic.save()
+
+    session_key = 'view_topic_{}'.format(topic.pk)
+    if not request.session.get(session_key, False):
+        topic.views += 1
+        topic.save()
+        request.session[session_key] = True
+    
+
     status = 200
     template_name = 'pages/topic_posts.html'
     context = {'topic':topic}
